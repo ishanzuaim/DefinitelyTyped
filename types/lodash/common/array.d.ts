@@ -1679,17 +1679,36 @@ declare module "../index" {
          * Creates a duplicate-free version of an array, using
          * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
          * for equality comparisons, in which only the first occurrence of each element
-         * is kept.
+         * is kept. Providing true for isSorted performs a faster search algorithm for 
+         * sorted arrays. If an iteratee function is provided it's invoked for each element
+         * in the array to generate the criterion by which uniqueness is computed. The 
+         * iteratee is bound to thisArg and invoked with three arguments: (value, index, array).
          *
          * @category Array
          * @param array The array to inspect.
+         * @param [isSorted] Specify the array is sorted
+         * @param [iteratee] The iteratee invoked per element.
          * @returns Returns the new duplicate free array.
          * @example
          *
          * _.uniq([2, 1, 2]);
          * // => [2, 1]
+         *   
+         * // using `isSorted`
+         * _.uniq([1, 1, 2], true);
+         * // => [1, 2]
+         *    
+         * // using an iteratee function
+         * _.uniq([1, 2.5, 1.5, 2], function(n) {
+         *   return this.floor(n);
+         * }, Math);
+         * // => [1, 2.5]
+         *    
+         * // using the `_.property` callback shorthand
+         * _.uniq([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
+         * // => [{ 'x': 1 }, { 'x': 2 }]
          */
-        uniq<T>(array: List<T> | null | undefined): T[];
+        uniq<T>(array: List<T> | null | undefined, isSorted?: boolean, iteratee?: ListIteratee<T>): T[];
     }
     interface Collection<T> {
         /**
@@ -1711,7 +1730,7 @@ declare module "../index" {
          *
          * @category Array
          * @param array The array to inspect.
-         * @param [iteratee=_.identity] The iteratee invoked per element.
+         * @param [iteratee=_.identity] The function invoked per iteration.
          * @returns Returns the new duplicate free array.
          * @example
          *
